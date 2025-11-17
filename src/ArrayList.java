@@ -17,19 +17,12 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
-    private void checkIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(
-                    "Index " + index + " out of bounds for size " + size);
-        }
-    }
+    private void checkIndex(int index, boolean forAdd) {
+        if (!forAdd && (index < 0 || index >= size))
+            throw new IndexOutOfBoundsException("Index " + index + ", Size " + size);
 
-    private void checkIndexForAdd(int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException(
-                    "Index " + index + " out of bounds for size " + size
-            );
-        }
+        if (forAdd && (index < 0 || index > size))
+            throw new IndexOutOfBoundsException("Index " + index + ", Size " + size);
     }
 
 
@@ -41,7 +34,7 @@ public class ArrayList<T> implements List<T> {
      */
     @Override
     public void add(int index, T element) {
-        checkIndexForAdd(index);
+        checkIndex(index, true);
         safeCapacity();
 
         for (int i = size - 1; i >= index; i--) {
@@ -70,7 +63,7 @@ public class ArrayList<T> implements List<T> {
      */
     @Override
     public T get(int index){
-        checkIndex(index);
+        checkIndex(index, false);
         return (T) array_list[index];
     }
 
@@ -81,7 +74,7 @@ public class ArrayList<T> implements List<T> {
      */
     @Override
     public T remove(int index){
-        checkIndex(index);
+        checkIndex(index, false);
         T element = (T) array_list[index];
         for(int i = index; i < size - 1; i++){
             array_list[i] = array_list[i + 1];

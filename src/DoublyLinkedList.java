@@ -18,20 +18,12 @@ public class DoublyLinkedList<T> implements List<T>{
         size = 0;
     }
 
-    private void checkIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(
-                    "Index " + index + " out of bounds for size " + size
-            );
-        }
-    }
+    private void checkIndex(int index, boolean forAdd) {
+        if(!forAdd && (index < 0 || index >= size))
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 
-    private void checkIndexForAdd(int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException(
-                    "Index " + index + " out of bounds for add operation (size " + size + ")"
-            );
-        }
+        if (forAdd && (index < 0 || index > size))
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
     }
 
     private Node getNode(int index) {
@@ -47,9 +39,10 @@ public class DoublyLinkedList<T> implements List<T>{
      */
     @Override
     public void add(int index, T element) {
-        checkIndexForAdd(index);
+        checkIndex(index, true);
+        Node new_node = new Node(element);
+
         if (index == 0) {
-            Node new_node = new Node(element);
             new_node.next = head;
             if(head != null) {
                 head.prev = new_node;
@@ -58,19 +51,16 @@ public class DoublyLinkedList<T> implements List<T>{
             size++;
             return;
         }
-        Node current = head;
-        for (int i = 0; i < index - 1; i++) {
-            current = current.next;
-        }
 
-        Node next_node = current.next;
-        Node temp = new Node(element);
-        current.next = temp;
-        temp.prev = current;
+        Node prev = getNode(index - 1);
+        Node next = prev.next;
 
-        temp.next = next_node;
-        if(next_node != null) {
-            next_node.prev = temp;
+        new_node.prev = prev;
+        new_node.next = next;
+
+        prev.next = new_node;
+        if(next != null) {
+            next.prev = new_node;
         }
         size++;
     }
@@ -81,19 +71,7 @@ public class DoublyLinkedList<T> implements List<T>{
      */
     @Override
     public boolean add(T element){
-        if(head == null){
-            head = new Node(element);
-            size++;
-            return true;
-        }
-        Node current = head;
-        while(current.next != null){
-            current = current.next;
-        }
-        Node x = new Node(element);
-        current.next = x;
-        x.prev = current;
-        size++;
+        add(size, element);
         return true;
     }
 
@@ -104,7 +82,7 @@ public class DoublyLinkedList<T> implements List<T>{
      */
     @Override
     public T get(int index){
-        checkIndex(index);
+        checkIndex(index, false);
         return getNode(index).data;
     }
 
@@ -115,22 +93,24 @@ public class DoublyLinkedList<T> implements List<T>{
      */
     @Override
     public T remove(int index){
-        checkIndex(index);
-        Node current = getNode(index);
+        checkIndex(index, false);
 
-        if (current.prev != null){
-            current.prev.next = current.next;
+        Node target = getNode(index);
+        Node prev = target.prev;
+        Node next = target.next;
+
+        if(prev != null){
+            prev.next = next;
         }
         else{
-            head = current.next;
+            head = next;
         }
-
-        if(current.next != null){
-            current.next.prev = current.prev;
+        if(next != null) {
+            next.prev = prev;
         }
 
         size--;
-        return current.data;
+        return target.data;
     }
 
     /**
