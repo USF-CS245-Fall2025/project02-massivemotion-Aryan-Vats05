@@ -19,17 +19,15 @@ public class DummyHeadLinkedList<T> implements List<T>{
         size = 0;
     }
 
-    private void checkIndex(int index, boolean forAdd) {
-        if (!forAdd && (index < 0 || index >= size))
+    private void checkIndex(int index) {
+        if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-
-        if (forAdd && (index < 0 || index > size))
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
     }
 
     private Node getNode(int index) {
-        Node current = head;
-        for (int i = 0; i <= index; i++){
+        Node current = head.next;
+        for (int i = 0; i < index; i++){
             current = current.next;
         }
         return current;
@@ -42,7 +40,7 @@ public class DummyHeadLinkedList<T> implements List<T>{
      */
     @Override
     public void add(int index, T element){
-        checkIndex(index, true);
+        checkIndex(index);
         Node newNode = new Node(element);
 
         Node prev = (index == 0) ? head : getNode(index - 1);
@@ -76,7 +74,7 @@ public class DummyHeadLinkedList<T> implements List<T>{
      */
     @Override
     public T get(int index){
-        checkIndex(index, false);
+        checkIndex(index + 1);
         return getNode(index).data;
     }
 
@@ -87,7 +85,7 @@ public class DummyHeadLinkedList<T> implements List<T>{
      */
     @Override
     public T remove(int index){
-        checkIndex(index, false);
+        checkIndex(index + 1);
 
         Node prev = (index == 0) ? head : getNode(index - 1);
         Node target = prev.next;

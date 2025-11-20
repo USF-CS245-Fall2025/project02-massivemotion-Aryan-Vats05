@@ -17,11 +17,8 @@ public class LinkedList<T> implements List<T>{
         size = 0;
     }
 
-    private void checkIndex(int index, boolean forAdd) {
-        if (!forAdd && (index < 0 || index >= size))
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-
-        if (forAdd && (index < 0 || index > size))
+    private void checkIndex(int index) {
+        if ((index < 0 || index > size))
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
     }
 
@@ -38,7 +35,7 @@ public class LinkedList<T> implements List<T>{
      */
     @Override
     public void add(int index, T element) {
-        checkIndex(index, true);
+        checkIndex(index);
         Node newNode = new Node(element);
         if(index == 0){
             newNode.next = head;
@@ -69,7 +66,7 @@ public class LinkedList<T> implements List<T>{
      */
     @Override
     public T get(int index){
-        checkIndex(index, false);
+        checkIndex(index + 1);
         return getNode(index).data;
     }
 
@@ -80,7 +77,7 @@ public class LinkedList<T> implements List<T>{
      */
     @Override
     public T remove(int index){
-        checkIndex(index, false);
+        checkIndex(index + 1);
         if (index == 0) {
             T val = head.data;
             head = head.next;
